@@ -5,14 +5,8 @@ namespace Domain;
 
 public class Account
 {
-    private Money _balance;
-    private readonly Transactions _userTransactions;
-
-    public Account()
-    {
-        _balance = None;
-        _userTransactions = new Transactions();
-    }
+    private Money _balance = None;
+    private readonly Transactions _userTransactions = new();
 
     private bool CanDeposit(int amount) => amount > 0;
 
