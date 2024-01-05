@@ -17,10 +17,13 @@ public class Money
     public Money(Money other) => _value = other._value;
 
     public static Money operator + (Money one, Money two) => new(one._value + two._value);
+    public static Money operator - (Money one, Money two) => new(one._value - two._value);
 
     public static bool operator >(Money money, int value) => money._value > value;
-
     public static bool operator <(Money money, int value) => money._value < value;
+    
+    public static bool operator >=(Money money, int value) => money._value >= value;
+    public static bool operator <=(Money money, int value) => money._value <= value;
 
     public string SignAsString() => $"+{_value}";
     public string AsString() => $"{_value}";

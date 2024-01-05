@@ -51,8 +51,19 @@ public class Account
         if (!CanWithdraw(amount))
             throw new InvalidOperationException();
         
+        var withdraw = new Withdraw(new Money(amount));
+        if (!withdraw.CanExecute())
+            return;
         
+        withdraw.Execute();
+        if (withdraw.IsCompleted())
+            WithdrawAmount(withdraw.Amount);
+        
+        var record = new UserTransaction(this, withdraw, _balance);
+        _transactions.Add(record);
     }
+    
+    private void WithdrawAmount(Money amount) => _balance -= amount;
 
     public string PrintStatement()
     {

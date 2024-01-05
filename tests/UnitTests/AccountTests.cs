@@ -90,6 +90,6 @@ public class AccountTests
         var result = account.PrintStatement();
 
         // assert
-        result.Should().Be("Date        Amount  Balance\n24.12.2015   +500      500\n24.12.2015   -500        0");
+        result.Should().Be("Date        Amount  Balance\n24.12.2015   +500      500\n24.12.2015   -500      0");
     }
 }

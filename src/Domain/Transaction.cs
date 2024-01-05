@@ -4,21 +4,25 @@ namespace Domain;
 
 public class Transaction
 {
-    private readonly Date _date;
+    protected readonly Date Date;
     private TransactionStatus _status;
     
     public readonly Money Amount;
 
     public Transaction(Money amount)
     {
-        _date = new Date(2015, 12, 24);
+        Date = new Date(2015, 12, 24);
         _status = Pending;
+
+        if (amount <= 0)
+            throw new InvalidOperationException();
+        
         Amount = amount;
     }
 
-    public void SetAsCompleted() => _status = Success;
-    
-    public void SetAsFailed() => _status = Failure;
+    private void SetAsCompleted() => _status = Success;
+
+    private void SetAsFailed() => _status = Failure;
 
     public bool CanExecute() => _status is Pending;
 
@@ -32,8 +36,9 @@ public class Transaction
 
     public bool IsCompleted() => _status == Success;
 
-    public string AsString()
+    public virtual string AsString()
     {
-        return $"{_date.AsString(),-12} {Amount.SignAsString(),-9}";
+        var positiveAmount = $"+{Amount.AsString()}";
+        return $"{Date.AsString(),-12} {positiveAmount,-9}";
     }
 }
