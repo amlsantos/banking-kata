@@ -39,9 +39,5 @@ public abstract class Transaction
 
     public bool IsCompleted() => _status == Success;
 
-    public virtual string AsString()
-    {
-        var positiveAmount = $"+{Amount.AsString()}";
-        return $"{Date.AsString(),-12} {positiveAmount,-9}";
-    }
+    public abstract string AsString();
 }
