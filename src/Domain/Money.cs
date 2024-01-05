@@ -2,6 +2,8 @@
 
 public class Money
 {
+    public static Money None = new(0);
+    
     private readonly int _value;
 
     public Money(int value)
@@ -11,7 +13,9 @@ public class Money
         
         _value = value;
     }
-    
+
+    public Money(Money other) => _value = other._value;
+
     public static Money operator + (Money one, Money two) => new(one._value + two._value);
 
     public static bool operator >(Money money, int value) => money._value > value;
@@ -19,6 +23,5 @@ public class Money
     public static bool operator <(Money money, int value) => money._value < value;
 
     public string SignAsString() => $"+{_value}";
-
-    public string MoneyAsString() => $"{_value}";
+    public string AsString() => $"{_value}";
 }

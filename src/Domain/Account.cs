@@ -1,19 +1,48 @@
 ﻿using System.Text;
+using static Domain.Money;
 
 namespace Domain;
 
 public class Account
 {
     private Money _balance;
-    private Date _date;
+    private readonly List<UserTransaction> _transactions;
 
-    public Account() => _balance = new Money(0);
+    public Account()
+    {
+        _balance = None;
+        _transactions = new List<UserTransaction>();
+    }
 
     public void Deposit(int amount)
     {
-        _balance += new Money(amount);
-        _date = new Date(2015, 12, 24);
+        if (amount <= 0)
+            throw new InvalidOperationException();
+
+        var transaction = new Transaction(new Money(amount));
+
+        if (!CanDeposit(transaction))
+            return;
+        
+        Execute(transaction);
     }
+
+    private bool CanDeposit(Transaction transaction)
+    {
+        return transaction.CanExecute();
+    }
+
+    private void Execute(Transaction transaction)
+    {
+        transaction.Execute();
+        if (transaction.IsCompleted()) 
+            UpdateBalance(transaction);
+        
+        var record = new UserTransaction(this, transaction, _balance);
+        _transactions.Add(record);
+    }
+
+    private void UpdateBalance(Transaction transaction) => _balance += transaction.Amount;
 
     public string PrintStatement()
     {
@@ -22,17 +51,12 @@ public class Account
         var header = "Date".PadRight(12) + "Amount".PadRight(8) + "Balance".PadRight(7);
         statement.Append(header);
 
-        if (_balance > 0)
+        foreach (var transaction in _transactions)
         {
             statement.Append('\n');
-            statement.Append(TransactionAsString());
+            statement.Append(transaction.AsString());
         }
 
         return statement.ToString();
-    }
-
-    private string TransactionAsString()
-    {
-        return $"{_date.AsString(),-12} {_balance.SignAsString(),-9} {_balance.MoneyAsString(),-8}";
     }
 }

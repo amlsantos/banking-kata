@@ -30,7 +30,7 @@ public class AccountTests
         var result = account.PrintStatement();
 
         // assert
-        result.TrimEnd().Should().Be("Date        Amount  Balance\n24.12.2015   +500      500".TrimEnd());
+        result.TrimEnd().Should().Be("Date        Amount  Balance\n24.12.2015   +500      500");
     }
 
     [Fact]
@@ -45,6 +45,6 @@ public class AccountTests
         var result = account.PrintStatement();
         
         // assert
-        result.TrimEnd().Should().Be("Date        Amount  Balance\n24.12.2015   +500      500\n24.12.2015   +100      600".TrimEnd());
+        result.Should().Be("Date        Amount  Balance\n24.12.2015   +500      500\n24.12.2015   +100      600");
     }
 }
