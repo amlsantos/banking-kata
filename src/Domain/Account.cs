@@ -21,15 +21,15 @@ public class Account
         if (!CanDeposit(amount))
             throw new InvalidOperationException();
 
-        var transaction = new Transaction(new Money(amount));
-        if (!transaction.CanExecute())
+        var deposit = new Deposit(new Money(amount));
+        if (!deposit.CanExecute())
             return;
         
-        transaction.Execute();
-        if (transaction.IsCompleted())
-            DepositAmount(transaction.Amount);
+        deposit.Execute();
+        if (deposit.IsCompleted())
+            DepositAmount(deposit.Amount);
         
-        var record = new UserTransaction(this, transaction, _balance);
+        var record = new UserTransaction(this, deposit, _balance);
         _transactions.Add(record);
     }
 

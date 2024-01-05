@@ -2,21 +2,24 @@
 
 namespace Domain;
 
-public class Transaction
+public abstract class Transaction
 {
-    protected readonly Date Date;
+    private Guid _id;
     private TransactionStatus _status;
-    
+    protected readonly Date Date;
+
     public readonly Money Amount;
 
     public Transaction(Money amount)
     {
         Date = new Date(2015, 12, 24);
+        
+        _id = Guid.NewGuid();
         _status = Pending;
 
         if (amount <= 0)
             throw new InvalidOperationException();
-        
+
         Amount = amount;
     }
 
