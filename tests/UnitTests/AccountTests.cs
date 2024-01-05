@@ -18,4 +18,18 @@ public class AccountTests
         // assert
         result.Should().Be("Date        Amount  Balance");
     }
+
+    [Fact]
+    public void PrintStatement_On1Deposit_ReturnsStatementWith1Transaction()
+    {
+        // arrange
+        var account = new Account();
+        account.Deposit(500);
+
+        // act
+        var result = account.PrintStatement();
+
+        // assert
+        result.TrimEnd().Should().Be("Date        Amount  Balance\n24.12.2015   +500      500".TrimEnd());
+    }
 }
