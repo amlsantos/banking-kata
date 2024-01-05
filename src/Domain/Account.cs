@@ -1,9 +1,16 @@
-﻿namespace Domain;
+﻿using System.Text;
+
+namespace Domain;
 
 public class Account
 {
     public string PrintStatement()
     {
-        return "Date        Amount  Balance";
+        var statement = new StringBuilder();
+        
+        var header = "Date        Amount  Balance";
+        statement.Append(header);
+        
+        return statement.ToString();
     }
 }
