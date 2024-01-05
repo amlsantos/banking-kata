@@ -4,12 +4,18 @@ namespace Domain;
 
 public class Account
 {
-    private int _balance;
+    private Money _balance;
     private DateOnly _date;
+
+    public Account()
+    {
+        _balance = new Money(0);
+    }
     
     public void Deposit(int amount)
     {
-        _balance = amount;
+        _balance += new Money(amount);
+        
         _date = new DateOnly(2015, 12, 24);
     }
     
@@ -19,7 +25,7 @@ public class Account
 
         var header = "Date".PadRight(12) + "Amount".PadRight(8) + "Balance".PadRight(7);
         statement.Append(header);
-
+        
         if (_balance > 0)
         {
             statement.Append('\n');
@@ -32,15 +38,11 @@ public class Account
 
     private string TransactionAsString()
     {
-        return $"{DateAsString(_date), -12} {MoneySignAsString(_balance), -9} {MoneyAsString(_balance), -8}";
+        return $"{DateAsString(_date), -12} {_balance.SignAsString(), -9} {_balance.MoneyAsString(), -8}";
     }
     
     private string DateAsString(DateOnly date)
     {
         return $"{date.Day}.{date.Month}.{date.Year}";
     }
-
-    private string MoneySignAsString(int money) => $"+{money}";
-
-    private string MoneyAsString(int money) => $"{money}";
 }
