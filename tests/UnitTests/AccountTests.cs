@@ -6,14 +6,13 @@ namespace UnitTests;
 
 public class AccountTests
 {
+    private readonly Account _account = new();
+
     [Fact]
     public void PrintStatement_On0Transactions_ReturnsEmptyStatement()
     {
-        // arrange
-        var account = new Account();
-
         // act
-        var result = account.PrintStatement();
+        var result = _account.PrintStatement();
 
         // assert
         result.Should().Be("Date        Amount  Balance");
@@ -24,11 +23,8 @@ public class AccountTests
     [InlineData(-100)]
     public void PrintStatement_On1InvalidDeposit_ReturnsException(int invalidAmount)
     {
-        // arrange
-        var account = new Account();
-
         // act
-        var exception = () => account.Deposit(invalidAmount);
+        var exception = () => _account.Deposit(invalidAmount);
 
         // assert
         exception.Should().Throw<InvalidOperationException>();
@@ -38,11 +34,10 @@ public class AccountTests
     public void PrintStatement_On1Deposit_ReturnsStatementWith1Transaction()
     {
         // arrange
-        var account = new Account();
-        account.Deposit(500);
+        _account.Deposit(500);
 
         // act
-        var result = account.PrintStatement();
+        var result = _account.PrintStatement();
 
         // assert
         result.TrimEnd().Should().Be("Date        Amount  Balance\n24.12.2015   +500      500");
@@ -52,12 +47,11 @@ public class AccountTests
     public void PrintStatement_On2Deposits_ReturnsStatementWith2Transactions()
     {
         // arrange
-        var account = new Account();
-        account.Deposit(500);
-        account.Deposit(100);
+        _account.Deposit(500);
+        _account.Deposit(100);
 
         // act
-        var result = account.PrintStatement();
+        var result = _account.PrintStatement();
 
         // assert
         result.Should().Be("Date        Amount  Balance\n24.12.2015   +500      500\n24.12.2015   +100      600");
@@ -68,11 +62,8 @@ public class AccountTests
     [InlineData(-100)]
     public void PrintStatement_OnInvalidWithdraw_ReturnsException(int invalidAmount)
     {
-        // arrange
-        var account = new Account();
-
         // act
-        var exception = () => account.Withdraw(invalidAmount);
+        var exception = () => _account.Withdraw(invalidAmount);
 
         // assert
         exception.Should().Throw<InvalidOperationException>();
@@ -82,14 +73,26 @@ public class AccountTests
     public void PrintStatement_On2Transactions_ReturnsStatementWith0Balance()
     {
         // arrange
-        var account = new Account();
-        account.Deposit(500);
-        account.Withdraw(500);
+        _account.Deposit(500);
+        _account.Withdraw(500);
 
         // act
-        var result = account.PrintStatement();
+        var result = _account.PrintStatement();
 
         // assert
         result.Should().Be("Date        Amount  Balance\n24.12.2015   +500      500\n24.12.2015   -500      0");
+    }
+    
+    [Fact]
+    public void PrintStatement_OnWithdrawHigherThanDeposit_ReturnsException()
+    {
+        // arrange
+        _account.Deposit(500);
+        
+        // act
+        var exception = () => _account.Withdraw(600);
+        
+        // assert
+        exception.Should().Throw<InvalidOperationException>();
     }
 }
