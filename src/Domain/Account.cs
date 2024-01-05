@@ -14,35 +14,45 @@ public class Account
         _transactions = new List<UserTransaction>();
     }
 
+    private bool CanDeposit(int amount) => amount > 0;
+
     public void Deposit(int amount)
     {
-        if (amount <= 0)
+        if (!CanDeposit(amount))
             throw new InvalidOperationException();
 
         var transaction = new Transaction(new Money(amount));
-
-        if (!CanDeposit(transaction))
+        if (!transaction.CanExecute())
             return;
         
-        Execute(transaction);
-    }
-
-    private bool CanDeposit(Transaction transaction)
-    {
-        return transaction.CanExecute();
-    }
-
-    private void Execute(Transaction transaction)
-    {
         transaction.Execute();
-        if (transaction.IsCompleted()) 
-            UpdateBalance(transaction);
+        if (transaction.IsCompleted())
+            DepositAmount(transaction.Amount);
         
         var record = new UserTransaction(this, transaction, _balance);
         _transactions.Add(record);
     }
 
-    private void UpdateBalance(Transaction transaction) => _balance += transaction.Amount;
+    private void DepositAmount(Money amount) => _balance += amount;
+
+    private bool CanWithdraw(int amount)
+    {
+        if (amount <= 0)
+            return false;
+
+        if (_balance < amount)
+            return false;
+
+        return true;
+    }
+
+    public void Withdraw(int amount)
+    {
+        if (!CanWithdraw(amount))
+            throw new InvalidOperationException();
+        
+        
+    }
 
     public string PrintStatement()
     {

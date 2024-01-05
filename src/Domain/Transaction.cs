@@ -4,14 +4,14 @@ namespace Domain;
 
 public class Transaction
 {
-    public readonly Date Date;
+    private readonly Date _date;
     private TransactionStatus _status;
     
     public readonly Money Amount;
 
     public Transaction(Money amount)
     {
-        Date = new Date(2015, 12, 24);
+        _date = new Date(2015, 12, 24);
         _status = Pending;
         Amount = amount;
     }
@@ -34,6 +34,6 @@ public class Transaction
 
     public string AsString()
     {
-        return $"{Date.AsString(),-12} {Amount.SignAsString(),-9}";
+        return $"{_date.AsString(),-12} {Amount.SignAsString(),-9}";
     }
 }
