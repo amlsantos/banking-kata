@@ -1,6 +1,6 @@
-﻿namespace Domain;
+﻿namespace Domain.Transactions;
 
-public class Transactions
+public class UserTransactions
 {
     private readonly List<UserTransaction> _transactions = new();
     public IReadOnlyList<UserTransaction> AsReadOnly => _transactions.AsReadOnly();

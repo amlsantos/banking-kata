@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Domain.Transactions;
 using static Domain.Money;
 
 namespace Domain;
@@ -6,7 +7,7 @@ namespace Domain;
 public class Account
 {
     private Money _balance = None;
-    private readonly Transactions _userTransactions = new();
+    private readonly UserTransactions _userUserTransactions = new();
 
     private bool CanDeposit(int amount) => amount > 0;
 
@@ -16,6 +17,8 @@ public class Account
             throw new InvalidOperationException();
 
         var deposit = new Deposit(new Money(amount));
+        var startBalance = new Money(_balance);
+        
         if (!deposit.CanExecute())
             return;
         
@@ -23,9 +26,8 @@ public class Account
         if (deposit.IsCompleted())
             DepositAmount(deposit.Amount);
         
-        var record = new UserTransaction(this, deposit, _balance);
-        
-        _userTransactions.Add(record);
+        var record = new UserTransaction(this, deposit, startBalance, _balance);
+        _userUserTransactions.Add(record);
     }
 
     private void DepositAmount(Money amount) => _balance += amount;
@@ -47,6 +49,8 @@ public class Account
             throw new InvalidOperationException();
         
         var withdraw = new Withdraw(new Money(amount));
+        var startBalance = new Money(_balance);
+        
         if (!withdraw.CanExecute())
             return;
         
@@ -54,8 +58,8 @@ public class Account
         if (withdraw.IsCompleted())
             WithdrawAmount(withdraw.Amount);
         
-        var record = new UserTransaction(this, withdraw, _balance);
-        _userTransactions.Add(record);
+        var record = new UserTransaction(this, withdraw, startBalance, _balance);
+        _userUserTransactions.Add(record);
     }
     
     private void WithdrawAmount(Money amount) => _balance -= amount;
@@ -67,7 +71,7 @@ public class Account
         var header = "Date".PadRight(12) + "Amount".PadRight(8) + "Balance".PadRight(7);
         statement.Append(header);
 
-        foreach (var transaction in _userTransactions.AsReadOnly)
+        foreach (var transaction in _userUserTransactions.AsReadOnly)
         {
             statement.Append('\n');
             statement.Append(transaction.AsString());

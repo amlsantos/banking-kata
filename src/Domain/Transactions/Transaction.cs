@@ -1,6 +1,6 @@
-﻿using static Domain.TransactionStatus;
+﻿using static Domain.Transactions.TransactionStatus;
 
-namespace Domain;
+namespace Domain.Transactions;
 
 public abstract class Transaction
 {
@@ -10,7 +10,7 @@ public abstract class Transaction
 
     public readonly Money Amount;
 
-    public Transaction(Money amount)
+    protected Transaction(Money amount)
     {
         Date = new Date(2015, 12, 24);
         
