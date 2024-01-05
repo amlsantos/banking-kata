@@ -6,12 +6,12 @@ namespace Domain;
 public class Account
 {
     private Money _balance;
-    private readonly List<UserTransaction> _transactions;
+    private readonly Transactions _userTransactions;
 
     public Account()
     {
         _balance = None;
-        _transactions = new List<UserTransaction>();
+        _userTransactions = new Transactions();
     }
 
     private bool CanDeposit(int amount) => amount > 0;
@@ -30,7 +30,8 @@ public class Account
             DepositAmount(deposit.Amount);
         
         var record = new UserTransaction(this, deposit, _balance);
-        _transactions.Add(record);
+        
+        _userTransactions.Add(record);
     }
 
     private void DepositAmount(Money amount) => _balance += amount;
@@ -60,7 +61,7 @@ public class Account
             WithdrawAmount(withdraw.Amount);
         
         var record = new UserTransaction(this, withdraw, _balance);
-        _transactions.Add(record);
+        _userTransactions.Add(record);
     }
     
     private void WithdrawAmount(Money amount) => _balance -= amount;
@@ -72,7 +73,7 @@ public class Account
         var header = "Date".PadRight(12) + "Amount".PadRight(8) + "Balance".PadRight(7);
         statement.Append(header);
 
-        foreach (var transaction in _transactions)
+        foreach (var transaction in _userTransactions.AsReadOnly)
         {
             statement.Append('\n');
             statement.Append(transaction.AsString());
