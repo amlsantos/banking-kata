@@ -7,7 +7,7 @@ namespace Domain;
 public class Account
 {
     private Money _balance = None;
-    private readonly UserTransactions _userUserTransactions = new();
+    private readonly UserTransactions _userTransactions = new();
 
     private bool CanDeposit(int amount) => amount > 0;
 
@@ -17,20 +17,18 @@ public class Account
             throw new InvalidOperationException();
 
         var deposit = new Deposit(new Money(amount));
-        var startBalance = new Money(_balance);
-        
-        if (!deposit.CanExecute())
+        if (!deposit.CanExecute(_balance))
             return;
         
-        deposit.Execute();
-        if (deposit.IsCompleted())
-            DepositAmount(deposit.Amount);
+        var oldBalance = new Money(_balance);
+        var newBalance = deposit.Execute(_balance);
         
-        var record = new UserTransaction(this, deposit, startBalance, _balance);
-        _userUserTransactions.Add(record);
+        if (deposit.IsCompleted())
+            UpdateBalance(newBalance);
+        
+        var record = new UserTransaction(this, deposit, oldBalance, newBalance);
+        _userTransactions.Add(record);
     }
-
-    private void DepositAmount(Money amount) => _balance += amount;
 
     private bool CanWithdraw(int amount)
     {
@@ -49,20 +47,20 @@ public class Account
             throw new InvalidOperationException();
         
         var withdraw = new Withdraw(new Money(amount));
-        var startBalance = new Money(_balance);
-        
-        if (!withdraw.CanExecute())
+        if (!withdraw.CanExecute(_balance))
             return;
         
-        withdraw.Execute();
-        if (withdraw.IsCompleted())
-            WithdrawAmount(withdraw.Amount);
+        var oldBalance = new Money(_balance);
+        var newBalance = withdraw.Execute(_balance);
         
-        var record = new UserTransaction(this, withdraw, startBalance, _balance);
-        _userUserTransactions.Add(record);
+        if (withdraw.IsCompleted())
+            UpdateBalance(newBalance);
+        
+        var record = new UserTransaction(this, withdraw, oldBalance, newBalance);
+        _userTransactions.Add(record);
     }
     
-    private void WithdrawAmount(Money amount) => _balance -= amount;
+    private void UpdateBalance(Money balance) => _balance = balance;
 
     public string PrintStatement()
     {
@@ -71,7 +69,7 @@ public class Account
         var header = "Date".PadRight(12) + "Amount".PadRight(8) + "Balance".PadRight(7);
         statement.Append(header);
 
-        foreach (var transaction in _userUserTransactions.AsReadOnly)
+        foreach (var transaction in _userTransactions.AsReadOnly)
         {
             statement.Append('\n');
             statement.Append(transaction.AsString());

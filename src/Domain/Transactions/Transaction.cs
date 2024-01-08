@@ -5,17 +5,16 @@ namespace Domain.Transactions;
 public abstract class Transaction
 {
     private Guid _id;
-    private TransactionStatus _status;
+    protected TransactionStatus Status;
     protected readonly Date Date;
-
-    public readonly Money Amount;
+    protected readonly Money Amount;
 
     protected Transaction(Money amount)
     {
         Date = new Date(2015, 12, 24);
         
         _id = Guid.NewGuid();
-        _status = Pending;
+        Status = Pending;
 
         if (amount <= 0)
             throw new InvalidOperationException();
@@ -23,21 +22,12 @@ public abstract class Transaction
         Amount = amount;
     }
 
-    private void SetAsCompleted() => _status = Success;
+    public abstract bool CanExecute(Money currentBalance);
+    public abstract Money Execute(Money currentBalance);
 
-    private void SetAsFailed() => _status = Failure;
-
-    public bool CanExecute() => _status is Pending;
-
-    public void Execute()
-    {
-        if (!CanExecute()) 
-            SetAsFailed();
-
-        SetAsCompleted();
-    }
-
-    public bool IsCompleted() => _status == Success;
+    protected void SetAsCompleted() => Status = Success;
+    protected void SetAsFailed() => Status = Failure;
+    public bool IsCompleted() => Status == Success;
 
     public abstract string AsString();
 }
