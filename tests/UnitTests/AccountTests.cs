@@ -37,10 +37,10 @@ public class AccountTests
         _account.Deposit(500);
 
         // act
-        var result = _account.PrintStatement();
+        var result = _account.PrintStatement().TrimEnd();
 
         // assert
-        result.TrimEnd().Should().Be("Date        Amount  Balance\n24.12.2015   +500      500");
+        result.Should().Be("Date        Amount  Balance\n24.12.2015   +500      500");
     }
 
     [Fact]

@@ -19,13 +19,13 @@ public class Account
         var deposit = new Deposit(new Money(amount));
         if (!deposit.CanExecute(_balance))
             return;
-        
+
         var oldBalance = new Money(_balance);
         var newBalance = deposit.Execute(_balance);
-        
+
         if (deposit.IsCompleted())
             UpdateBalance(newBalance);
-        
+
         var record = new UserTransaction(this, deposit, oldBalance, newBalance);
         _userTransactions.Add(record);
     }
@@ -45,36 +45,31 @@ public class Account
     {
         if (!CanWithdraw(amount))
             throw new InvalidOperationException();
-        
-        var withdraw = new Withdraw(new Money(amount));
-        if (!withdraw.CanExecute(_balance))
+
+        var transaction = new Withdraw(new Money(amount));
+        if (!transaction.CanExecute(_balance))
             return;
-        
+
         var oldBalance = new Money(_balance);
-        var newBalance = withdraw.Execute(_balance);
-        
-        if (withdraw.IsCompleted())
+        var newBalance = transaction.Execute(_balance);
+
+        if (transaction.IsCompleted())
             UpdateBalance(newBalance);
-        
-        var record = new UserTransaction(this, withdraw, oldBalance, newBalance);
+
+        var record = new UserTransaction(this, transaction, oldBalance, newBalance);
         _userTransactions.Add(record);
     }
-    
+
     private void UpdateBalance(Money balance) => _balance = balance;
 
     public string PrintStatement()
     {
-        var statement = new StringBuilder();
-
-        var header = "Date".PadRight(12) + "Amount".PadRight(8) + "Balance".PadRight(7);
-        statement.Append(header);
-
-        foreach (var transaction in _userTransactions.AsReadOnly)
-        {
-            statement.Append('\n');
-            statement.Append(transaction.AsString());
-        }
-
-        return statement.ToString();
+        var builder = new Statement.Builder();
+        var statement = builder
+            .WithHeader()
+            .WithTransactions(_userTransactions)
+            .Build();
+        
+        return statement.AsString();
     }
 }
