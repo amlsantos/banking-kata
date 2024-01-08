@@ -1,4 +1,6 @@
-﻿namespace Domain.Transactions;
+﻿using Domain.Transactions;
+
+namespace Domain;
 
 public class UserTransactions
 {

@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Domain.Transactions;
+﻿using Domain.Transactions;
 using static Domain.Money;
 
 namespace Domain;
